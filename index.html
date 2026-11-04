@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VRChat · Hall of Fame</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif}body{margin:0;min-height:100vh;background:#101827;color:#f5f7fb;display:grid;place-items:center}
+main{width:min(760px,92vw);padding:28px 0}h1{margin:0 0 5px;letter-spacing:.06em}.sub,footer,.muted{color:#9fb0c8}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}button{cursor:pointer;border:1px solid #40516c;color:#dce7f7;background:#1b2940;border-radius:9px;padding:10px 15px}
+button[aria-selected=true]{background:#385783;border-color:#7295c5;color:white}.panel{background:#19263a;border:1px solid #34445e;border-radius:14px;padding:16px}
+.row{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;padding:11px 8px;border-bottom:1px solid #2b3a51}.row:last-child{border:0}
+.pos{color:#f0c96b;font-weight:800}.points{font-variant-numeric:tabular-nums;font-weight:700}footer{font-size:12px;margin-top:12px}
+</style></head>
+<body><main><h1>🏆 HALL OF FAME</h1><p class="sub">Clasificaciones de VRChat</p>
+<nav role="tablist" aria-label="Categorías">
+<button role="tab" aria-selected="true" data-tab="global">Global</button>
+<button role="tab" aria-selected="false" data-tab="parkour">Parkour</button>
+<button role="tab" aria-selected="false" data-tab="alternatives">Alternativas</button></nav>
+<section class="panel" aria-live="polite"><div id="rows"><p class="muted">Cargando ranking…</p></div></section>
+<footer id="status">Fuente: ranking.json · Sin puntuaciones publicadas todavía.</footer></main>
+<script>
+let ranking={global:[],parkour:[],alternatives:[]},active="global";
+const rows=document.getElementById("rows"),status=document.getElementById("status");
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function render(){const a=ranking[active]||[];rows.innerHTML=a.length?a.slice(0,10).map((e,i)=>`<div class="row"><span class="pos">#${i+1}</span><span>${esc(e.name||"Jugador")}</span><span class="points">${Number(e.points||0).toFixed(1)}</span></div>`).join(""):'<p class="muted">Todavía no hay puntuaciones publicadas.</p>';}
+document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>{active=b.dataset.tab;document.querySelectorAll("[data-tab]").forEach(x=>x.setAttribute("aria-selected",String(x===b)));render();}));
+fetch("./ranking.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json();}).then(d=>{ranking=d;render();if(d.updatedAt)status.textContent="Última actualización: "+d.updatedAt;}).catch(e=>{rows.innerHTML='<p class="muted">No se pudo cargar ranking.json. Comprueba GitHub Pages.</p>';status.textContent="Error: "+e.message;});
+</script></body></html>
