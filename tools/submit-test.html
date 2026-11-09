@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prueba manual del ranking</title>
+<style>
+body{font:16px system-ui;background:#0d1018;color:#eef;padding:24px;max-width:720px;margin:auto}label{display:block;margin:14px 0 5px}input{width:100%;padding:11px;border-radius:8px;border:1px solid #444;background:#181e2a;color:white}button{margin-top:18px;padding:12px 20px;border:0;border-radius:9px;background:#e4bd68;font-weight:bold}small{color:#aab}pre{white-space:pre-wrap;background:#181e2a;padding:14px;border-radius:9px;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<h1>Enviar puntuación de prueba</h1>
+<p>Herramienta manual para probar el Worker. No es una conexión automática desde VRChat. No publiques esta página con el token escrito dentro.</p>
+<form id="form">
+<label>URL del Worker (ej. https://vrchat-ranking-api.TUUSUARIO.workers.dev)</label><input id="api" required>
+<label>Token de envío (SUBMIT_TOKEN)</label><input id="token" type="password" required>
+<label>VRChat Player ID (solo prueba; usa usr_... para cuentas reales)</label><input id="playerId" required>
+<label>Nombre de jugador</label><input id="playerName" maxlength="32" required>
+<label><input id="hasParkour" type="checkbox" checked style="width:auto"> Tiene resultado de Parkour</label>
+<label>Mejor tiempo Parkour (segundos)</label><input id="parkourSeconds" type="number" min="0.01" max="3600" step="0.01" value="45.50">
+<label><input id="hasAlternatives" type="checkbox" checked style="width:auto"> Tiene resultado de Alternativas</label>
+<label>Respuestas correctas</label><input id="alternativesCorrect" type="number" min="0" max="20" step="1" value="16">
+<label>Total de preguntas</label><input id="alternativesTotal" type="number" min="1" max="100" step="1" value="20">
+<button type="submit">Enviar resultado de prueba</button>
+</form>
+<h2>Respuesta</h2><pre id="result">A la espera…</pre>
+<script>
+document.getElementById('form').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const api = document.getElementById('api').value.trim().replace(/\/$/, '');
+  const token = document.getElementById('token').value;
+  const payload = {
+    playerId: document.getElementById('playerId').value.trim(),
+    playerName: document.getElementById('playerName').value.trim(),
+    hasParkour: document.getElementById('hasParkour').checked,
+    parkourSeconds: Number(document.getElementById('parkourSeconds').value),
+    hasAlternatives: document.getElementById('hasAlternatives').checked,
+    alternativesCorrect: Number(document.getElementById('alternativesCorrect').value),
+    alternativesTotal: Number(document.getElementById('alternativesTotal').value)
+  };
+  const output = document.getElementById('result'); output.textContent = 'Enviando…';
+  try {
+    const response = await fetch(api + '/api/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify(payload)
+    });
+    const data = await response.json();
+    output.textContent = JSON.stringify(data, null, 2);
+  } catch (error) { output.textContent = 'Error: ' + error.message; }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+name = "vrchat-ranking-api"
+main = "src/index.js"
+compatibility_date = "2026-11-09"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "vrchat-ranking"
+database_id = "PEGA_AQUI_EL_DATABASE_ID_DE_CLOUDFLARE"
+
+[vars]
+GITHUB_OWNER = "andrxsllugo99"
+GITHUB_REPO = "vrchat-ranking"
+GITHUB_BRANCH = "main"
+GITHUB_PATH = "ranking.json"
